@@ -11,36 +11,48 @@ from utils.util import paddle2cv, cv2paddle
 from utils.prepare_data import LandmarkModel
 
 def get_id_emb(id_net, id_img_path):
+
     id_img = cv2.imread(id_img_path)
 
     id_img = cv2.resize(id_img, (112, 112))
+    
     id_img = cv2paddle(id_img)
+    
     mean = paddle.to_tensor([[0.485, 0.456, 0.406]]).reshape((1, 3, 1, 1))
+    
     std = paddle.to_tensor([[0.229, 0.224, 0.225]]).reshape((1, 3, 1, 1))
+    
     id_img = (id_img - mean) / std
+    
 
     id_emb, id_feature = id_net(id_img)
+    print("HERE~~")
     id_emb = l2_norm(id_emb)
 
     return id_emb, id_feature
 
 
 def image_test(args):
+    
     paddle.set_device("gpu" if args.use_gpu else 'cpu')
+    
     faceswap_model = FaceSwap(args.use_gpu)
-
     id_net = ResNet(block=IRBlock, layers=[3, 4, 23, 3])
     id_net.set_dict(paddle.load('./checkpoints/arcface.pdparams'))
 
     id_net.eval()
 
     weight = paddle.load('./checkpoints/MobileFaceSwap_224.pdparams')
+    
 
     base_path = args.source_img_path.replace('.png', '').replace('.jpg', '').replace('.jpeg', '')
+
     id_emb, id_feature = get_id_emb(id_net, base_path + '_aligned.png')
+    print("HERE!!")
 
     faceswap_model.set_model_param(id_emb, id_feature, model_weight=weight)
     faceswap_model.eval()
+    
 
     if os.path.isfile(args.target_img_path):
         img_list = [args.target_img_path]
@@ -57,10 +69,12 @@ def image_test(args):
         res, mask = faceswap_model(att_img)
         res = paddle2cv(res)
 
+
         if args.merge_result:
             back_matrix = np.load(base_path + '_back.npy')
             mask = np.transpose(mask[0].numpy(), (1, 2, 0))
             res = dealign(res, origin_att_img, back_matrix, mask)
+        
         cv2.imwrite(os.path.join(args.output_dir, os.path.basename(img_path)), res)
 
 

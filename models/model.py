@@ -6,6 +6,7 @@ class FaceSwap(nn.Layer):
     def __init__(self, use_gpu=True):
         super().__init__()
         self.swap_model = UNet()
+        
 
     def set_model_param(self, id_emb, id_feature_map, model_weight=None):
         predict_model = BuildFaceSwap()
@@ -35,7 +36,9 @@ class FaceSwap(nn.Layer):
 class UNet(nn.Layer):
     def __init__(self):
         super().__init__()
+        
         self.Encoder_channel = [3, 32, 64, 128, 256, 512]
+        
         self.Encoder = nn.LayerList()
         for i in range(len(self.Encoder_channel)-1):         
             self.Encoder.append(nn.Sequential(*[
