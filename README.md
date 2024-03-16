@@ -3,10 +3,12 @@
 
 
 **Dependencies**
-- paddlepaddle==2.1.2
-- insightface==0.2.1
+- python 3.9
+- paddlepaddle==2.6.0 (just pip install paddlepaddle should work)
+- insightface==0.2.1 
 - opencv
 - numpy
+- onnxruntime
 
 **Getting Started**
 
