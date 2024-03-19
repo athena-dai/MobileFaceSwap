@@ -75,7 +75,7 @@ def image_test(args):
             mask = np.transpose(mask[0].numpy(), (1, 2, 0))
             res = dealign(res, origin_att_img, back_matrix, mask)
         
-        cv2.imwrite(os.path.join(args.output_dir, os.path.basename(img_path)), res)
+        cv2.imwrite(os.path.join(args.output_dir, 'result_'+os.path.basename(img_path)), res)
 
 
 def face_align(landmarkModel, image_path, merge_result=False, image_size=224):
@@ -101,6 +101,7 @@ if __name__ == '__main__':
     parser.add_argument('--source_img_path', type=str, help='path to the source image')
     parser.add_argument('--target_img_path', type=str, help='path to the target images')
     parser.add_argument('--output_dir', type=str, default='results', help='path to the output dirs')
+    # parser.add_argument('--output_name', type=str, default='out')
     parser.add_argument('--image_size', type=int, default=224,help='size of the test images (224 SimSwap | 256 FaceShifter)')
     parser.add_argument('--merge_result', type=bool, default=True, help='output with whole image')
     parser.add_argument('--need_align', type=bool, default=True, help='need to align the image')
